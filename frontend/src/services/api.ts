@@ -15,3 +15,18 @@ export async function createExpense(expense: Omit<Expense, 'id'>): Promise<Expen
   })
   return response.json()
 }
+export async function deleteExpense(id: number): Promise<void> {
+  await fetch(`${apiUrl}/expenses/${id}`, {
+    method: 'DELETE',
+  })
+}
+
+export async function updateExpense(expense: Expense): Promise<void> {
+  await fetch(`${apiUrl}/expenses/${expense.id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(expense),
+  })
+}

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { createExpense, getExpenses } from './services/api'
+import { createExpense, deleteExpense, getExpenses, updateExpense } from './services/api'
 import type { Expense } from './types/expense'
 import './App.css'
 
@@ -22,6 +22,18 @@ function App() {
       console.error(error)
     }
   }
+
+  const handleDelete = async (id: number) => {
+  try {
+    await deleteExpense(id)
+
+    setExpenses(
+      expenses.filter((expense) => expense.id !== id)
+    )
+  } catch (error) {
+    console.error(error)
+  }
+}
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -115,7 +127,7 @@ function App() {
                     <th>Date</th>
                     <th>Title</th>
                     <th>Category</th>
-                    <th>Amount</th>
+                    <th>Amount</th><th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -125,6 +137,7 @@ function App() {
                       <td>{expense.title}</td>
                       <td>{expense.category}</td>
                       <td>${expense.amount.toFixed(2)}</td>
+                      <td><button onClick={() => handleDelete(expense.id)}>Delete </button></td>
                     </tr>
                   ))}
                 </tbody>

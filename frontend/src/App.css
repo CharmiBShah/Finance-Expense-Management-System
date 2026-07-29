@@ -1,0 +1,214 @@
+:root {
+  color-scheme: dark;
+  color: #e5e7eb;
+  background: #0f172a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 20%),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.12), transparent 26%),
+    #020617;
+  color: #e5e7eb;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.app-header {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.8rem;
+  margin: 0 0 12px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.05;
+}
+
+.app-header p {
+  margin: 16px 0 0;
+  max-width: 640px;
+  color: #cbd5e1;
+}
+
+.dashboard-card {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 24px;
+  padding: 28px 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-card span {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.dashboard-card strong {
+  font-size: 2rem;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+}
+
+.panel {
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 28px;
+  padding: 28px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 1.3rem;
+}
+
+.expense-form {
+  display: grid;
+  gap: 16px;
+}
+
+.expense-form label {
+  display: grid;
+  gap: 8px;
+  color: #cbd5e1;
+}
+
+.expense-form input,
+.expense-form select,
+.expense-form textarea {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: #020617;
+  color: #e2e8f0;
+  padding: 14px 16px;
+}
+
+.expense-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.expense-form button {
+  align-self: start;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #38bdf8, #22c55e);
+  color: #020617;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.expense-form button:hover {
+  opacity: 0.95;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.section-header span {
+  color: #94a3b8;
+}
+
+.expense-table-wrapper {
+  overflow-x: auto;
+}
+
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.expense-table th,
+.expense-table td {
+  text-align: left;
+  padding: 14px 16px;
+}
+
+.expense-table th {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.expense-table tr {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+.expense-table td {
+  color: #e2e8f0;
+}
+
+.empty-state {
+  margin: 0;
+  color: #94a3b8;
+}
+
+.category-summary {
+  margin-top: 28px;
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.category-pill {
+  display: inline-flex;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+@media (max-width: 980px) {
+  .app-header,
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+}

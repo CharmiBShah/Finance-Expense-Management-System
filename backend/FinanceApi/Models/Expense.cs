@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using FinanceApi.Data;
+using FinanceApi.DTOs;
+using Microsoft.EntityFrameworkCore;
 namespace FinanceApi.Models
 {
     public class Expense

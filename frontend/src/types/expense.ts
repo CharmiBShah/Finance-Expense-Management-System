@@ -4,5 +4,5 @@ export interface Expense {
     amount: number;
     category: string;
     date: string;
-    description?: string;
+    notes?: string;
 }

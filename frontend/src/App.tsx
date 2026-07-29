@@ -9,6 +9,7 @@ function App() {
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('Uncategorized')
   const [notes, setNotes] = useState('')
+  const [editingId, setEditingId] = useState<number | null>(null)
 
   useEffect(() => {
     loadExpenses()
@@ -35,24 +36,64 @@ function App() {
   }
 }
 
+const handleEdit = (expense: Expense) => {
+  setEditingId(expense.id)
+  setTitle(expense.title)
+  setAmount(expense.amount.toString())
+  setCategory(expense.category)
+  setNotes(expense.notes || '')
+}
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!title || !amount) return
+  event.preventDefault()
 
-    const newExpense = await createExpense({
-      title,
-      amount: Number(amount),
-      category,
-      date: new Date().toISOString(),
-      notes,
-    })
+  if (!title || !amount) return
 
-    setExpenses([newExpense, ...expenses])
+  try {
+    if (editingId !== null) {
+
+      const updatedExpense: Expense = {
+        id: editingId,
+        title,
+        amount: Number(amount),
+        category,
+        date: new Date().toISOString(),
+        notes,
+      }
+
+      await updateExpense(updatedExpense)
+
+      setExpenses(
+        expenses.map((expense) =>
+          expense.id === editingId
+            ? updatedExpense
+            : expense
+        )
+      )
+
+      setEditingId(null)
+
+    } else {
+
+      const newExpense = await createExpense({
+        title,
+        amount: Number(amount),
+        category,
+        date: new Date().toISOString(),
+        notes,
+      })
+
+      setExpenses([newExpense, ...expenses])
+    }
+
     setTitle('')
     setAmount('')
     setCategory('Uncategorized')
     setNotes('')
+
+  } catch (error) {
+    console.error(error)
   }
+}
 
   const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0)
   const categories = Array.from(new Set(expenses.map((expense) => expense.category)))
@@ -73,7 +114,7 @@ function App() {
 
       <main className="app-main">
         <section className="panel">
-          <h2>Add expense</h2>
+          <h2>{editingId ? 'Edit expense' : 'Add expense'}</h2>
           <form className="expense-form" onSubmit={handleSubmit}>
             <label>
               Title
@@ -107,7 +148,7 @@ function App() {
               Notes
               <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add any contextual details" />
             </label>
-            <button type="submit">Save expense</button>
+            <button type="submit">{editingId ? 'Update expense' : 'Save expense'}</button>
           </form>
         </section>
 
@@ -137,7 +178,7 @@ function App() {
                       <td>{expense.title}</td>
                       <td>{expense.category}</td>
                       <td>${expense.amount.toFixed(2)}</td>
-                      <td><button onClick={() => handleDelete(expense.id)}>Delete </button></td>
+                      <td><button onClick={() => handleEdit(expense)}>Edit</button><button onClick={() => handleDelete(expense.id)}>Delete</button></td>
                     </tr>
                   ))}
                 </tbody>

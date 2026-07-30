@@ -1,7 +1,6 @@
-using FinanceApi.Data;
-using FinanceApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using FinanceApi.Services;
+using FinanceApi.DTOs;
 
 namespace FinanceApi.Controllers
 {
@@ -9,51 +8,48 @@ namespace FinanceApi.Controllers
     [Route("api/[controller]")]
     public class ExpensesController : ControllerBase
     {
-        private readonly FinanceDbContext _context;
+        private readonly IExpenseService _expenseService;
 
-        public ExpensesController(FinanceDbContext context)
+        public ExpensesController(IExpenseService expenseService)
         {
-            _context = context;
+            _expenseService = expenseService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses()
+        public async Task<ActionResult<IEnumerable<ExpenseResponseDto>>> GetExpenses()
         {
-            return await _context.Expenses.OrderByDescending(e => e.Date).ToListAsync();
+            var expenses = await _expenseService.GetExpensesAsync();
+            return Ok(expenses);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Expense>> GetExpense(int id)
+        public async Task<ActionResult<ExpenseResponseDto>> GetExpense(int id)
         {
-            var expense = await _context.Expenses.FindAsync(id);
-            if (expense == null) return NotFound();
-            return expense;
+            var expense = await _expenseService.GetExpenseByIdAsync(id);
+
+            if (expense == null)
+                return NotFound();
+
+            return Ok(expense);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Expense>> CreateExpense(Expense expense)
+        public async Task<ActionResult<ExpenseResponseDto>> CreateExpense(ExpenseCreateDto expenseDto)
         {
-            _context.Expenses.Add(expense);
-            await _context.SaveChangesAsync();
+            var createdExpense = await _expenseService.CreateExpenseAsync(expenseDto);
 
-            return CreatedAtAction(nameof(GetExpense), new { id = expense.Id }, expense);
+            return CreatedAtAction(
+                nameof(GetExpense),
+                new { id = createdExpense.Id },
+                createdExpense);
         }
-
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateExpense(int id, Expense expense)
+        public async Task<IActionResult> UpdateExpense(int id, ExpenseUpdateDto expenseDto)
         {
-            if (id != expense.Id) return BadRequest();
-            _context.Entry(expense).State = EntityState.Modified;
+            var updated = await _expenseService.UpdateExpenseAsync(id, expenseDto);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Expenses.Any(e => e.Id == id)) return NotFound();
-                throw;
-            }
+            if (!updated)
+                return NotFound();
 
             return NoContent();
         }
@@ -61,11 +57,11 @@ namespace FinanceApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpense(int id)
         {
-            var expense = await _context.Expenses.FindAsync(id);
-            if (expense == null) return NotFound();
+            var deleted = await _expenseService.DeleteExpenseAsync(id);
 
-            _context.Expenses.Remove(expense);
-            await _context.SaveChangesAsync();
+            if (!deleted)
+                return NotFound();
+
             return NoContent();
         }
     }

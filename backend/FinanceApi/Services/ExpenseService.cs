@@ -9,9 +9,14 @@ namespace FinanceApi.Services
     {
         private readonly FinanceDbContext _context;
 
-        public ExpenseService(FinanceDbContext context)
+        private readonly ILogger<ExpenseService> _logger;
+
+        public ExpenseService(
+            FinanceDbContext context,
+            ILogger<ExpenseService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<ExpenseResponseDto>> GetExpensesAsync()
@@ -51,6 +56,9 @@ namespace FinanceApi.Services
 
         public async Task<ExpenseResponseDto> CreateExpenseAsync(ExpenseCreateDto expenseDto)
         {
+
+            _logger.LogInformation("Creating expense with title: {Title}", expenseDto.Title);
+
             var expense = new Expense
             {
                 Title = expenseDto.Title,
@@ -62,6 +70,7 @@ namespace FinanceApi.Services
 
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
+            _logger.LogInformation("Expense created successfully with Id: {Id}",expense.Id);
 
             return new ExpenseResponseDto
             {

@@ -25,15 +25,7 @@ namespace FinanceApi.Services
                 .OrderByDescending(e => e.Date)
                 .ToListAsync();
 
-            return expenses.Select(e => new ExpenseResponseDto
-            {
-                Id = e.Id,
-                Title = e.Title,
-                Amount = e.Amount,
-                Category = e.Category,
-                Date = e.Date,
-                Notes = e.Notes
-            });
+            return expenses.Select(MapToResponseDto);
         }
 
         public async Task<ExpenseResponseDto?> GetExpenseByIdAsync(int id)
@@ -43,15 +35,7 @@ namespace FinanceApi.Services
             if (expense == null)
                 return null;
 
-            return new ExpenseResponseDto
-            {
-                Id = expense.Id,
-                Title = expense.Title,
-                Amount = expense.Amount,
-                Category = expense.Category,
-                Date = expense.Date,
-                Notes = expense.Notes
-            };
+            return MapToResponseDto(expense);
         }
 
         public async Task<ExpenseResponseDto> CreateExpenseAsync(ExpenseCreateDto expenseDto)
@@ -70,17 +54,9 @@ namespace FinanceApi.Services
 
             _context.Expenses.Add(expense);
             await _context.SaveChangesAsync();
-            _logger.LogInformation("Expense created successfully with Id: {Id}",expense.Id);
+            _logger.LogInformation("Expense created successfully with Id: {Id}", expense.Id);
 
-            return new ExpenseResponseDto
-            {
-                Id = expense.Id,
-                Title = expense.Title,
-                Amount = expense.Amount,
-                Category = expense.Category,
-                Date = expense.Date,
-                Notes = expense.Notes
-            };
+            return MapToResponseDto(expense);
         }
 
         public async Task<bool> UpdateExpenseAsync(int id, ExpenseUpdateDto expenseDto)
@@ -113,6 +89,19 @@ namespace FinanceApi.Services
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        private ExpenseResponseDto MapToResponseDto(Expense expense)
+        {
+            return new ExpenseResponseDto
+            {
+                Id = expense.Id,
+                Title = expense.Title,
+                Amount = expense.Amount,
+                Category = expense.Category,
+                Date = expense.Date,
+                Notes = expense.Notes
+            };
         }
     }
 }

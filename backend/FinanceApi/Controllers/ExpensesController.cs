@@ -16,6 +16,10 @@ namespace FinanceApi.Controllers
             _expenseService = expenseService;
         }
 
+        /// <summary>
+        /// Retrieves all expenses sorted by date in descending order.
+        /// </summary>
+        /// <returns>A list of expenses.</returns>
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<ExpenseResponseDto>>>> GetExpenses()
         {
@@ -30,6 +34,12 @@ namespace FinanceApi.Controllers
             return Ok(response);
         }
 
+
+        /// <summary>
+        /// Retrieves a specific expense by its ID.
+        /// </summary>
+        /// <param name="id">The ID of the expense.</param>
+        /// <returns>The requested expense if found.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ExpenseResponseDto>>> GetExpense(int id)
         {
@@ -54,6 +64,12 @@ namespace FinanceApi.Controllers
             return Ok(response);
         }
 
+
+        /// <summary>
+        /// Creates a new expense.
+        /// </summary>
+        /// <param name="expenseDto">The expense details.</param>
+        /// <returns>The newly created expense.</returns>
         [HttpPost]
         public async Task<ActionResult<ApiResponse<ExpenseResponseDto>>> CreateExpense(
     ExpenseCreateDto expenseDto)
@@ -72,6 +88,13 @@ namespace FinanceApi.Controllers
                 response);
         }
 
+
+        /// <summary>
+        /// Updates an existing expense.
+        /// </summary>
+        /// <param name="id">The ID of the expense.</param>
+        /// <param name="expenseDto">The updated expense details.</param>
+        /// <returns>No content if the update is successful.</returns>
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<object>>> UpdateExpense(
     int id,
@@ -97,6 +120,12 @@ namespace FinanceApi.Controllers
             return Ok(response);
         }
 
+
+        /// <summary>
+        /// Deletes an expense.
+        /// </summary>
+        /// <param name="id">The ID of the expense.</param>
+        /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<object>>> DeleteExpense(int id)
         {

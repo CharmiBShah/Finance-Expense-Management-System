@@ -25,5 +25,9 @@ namespace FinanceApi.Models
         public DateTime Date { get; set; } = DateTime.UtcNow;
 
         public string Notes { get; set; } = string.Empty;
+
+        public int UserId { get; set; }
+
+        public User User { get; set; } = null!;
     }
 }

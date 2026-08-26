@@ -33,20 +33,35 @@ namespace FinanceApi.Middleware
 
 
         private static async Task HandleExceptionAsync(
-            HttpContext context,
-            Exception exception)
+     HttpContext context,
+     Exception exception)
         {
             context.Response.ContentType = "application/json";
+
+            if (exception is UnauthorizedAccessException)
+            {
+                context.Response.StatusCode =
+                    (int)HttpStatusCode.Unauthorized;
+
+                var unauthorizedResponse = new
+                {
+                    message = "Invalid email or password."
+                };
+
+                await context.Response.WriteAsync(
+                    JsonSerializer.Serialize(unauthorizedResponse));
+
+                return;
+            }
+
             context.Response.StatusCode =
                 (int)HttpStatusCode.InternalServerError;
-
 
             var response = new
             {
                 message = "An unexpected error occurred.",
                 details = exception.Message
             };
-
 
             await context.Response.WriteAsync(
                 JsonSerializer.Serialize(response));

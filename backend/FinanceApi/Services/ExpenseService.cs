@@ -19,18 +19,17 @@ namespace FinanceApi.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<ExpenseResponseDto>> GetExpensesAsync()
+        public async Task<IEnumerable<ExpenseResponseDto>> GetExpensesAsync(int userId)
         {
             var expenses = await _context.Expenses
-                .OrderByDescending(e => e.Date)
-                .ToListAsync();
+            .Where(e => e.UserId == userId).OrderByDescending(e => e.Date).ToListAsync();
 
             return expenses.Select(MapToResponseDto);
         }
 
-        public async Task<ExpenseResponseDto?> GetExpenseByIdAsync(int id)
+        public async Task<ExpenseResponseDto?> GetExpenseByIdAsync(int id,int userId)
         {
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
             if (expense == null)
                 return null;
@@ -38,7 +37,7 @@ namespace FinanceApi.Services
             return MapToResponseDto(expense);
         }
 
-        public async Task<ExpenseResponseDto> CreateExpenseAsync(ExpenseCreateDto expenseDto)
+        public async Task<ExpenseResponseDto> CreateExpenseAsync(ExpenseCreateDto expenseDto,int userId)
         {
 
             _logger.LogInformation("Creating expense with title: {Title}", expenseDto.Title);
@@ -49,7 +48,8 @@ namespace FinanceApi.Services
                 Amount = expenseDto.Amount,
                 Category = expenseDto.Category,
                 Date = expenseDto.Date,
-                Notes = expenseDto.Notes ?? string.Empty
+                Notes = expenseDto.Notes ?? string.Empty,
+                UserId = userId,
             };
 
             _context.Expenses.Add(expense);
@@ -59,9 +59,9 @@ namespace FinanceApi.Services
             return MapToResponseDto(expense);
         }
 
-        public async Task<bool> UpdateExpenseAsync(int id, ExpenseUpdateDto expenseDto)
+        public async Task<bool> UpdateExpenseAsync(int id,ExpenseUpdateDto expenseDto,int userId)
         {
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
             if (expense == null)
                 return false;
@@ -78,9 +78,9 @@ namespace FinanceApi.Services
             return true;
         }
 
-        public async Task<bool> DeleteExpenseAsync(int id)
+        public async Task<bool> DeleteExpenseAsync(int id,int userId)
         {
-            var expense = await _context.Expenses.FindAsync(id);
+            var expense = await _context.Expenses.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
             if (expense == null)
                 return false;

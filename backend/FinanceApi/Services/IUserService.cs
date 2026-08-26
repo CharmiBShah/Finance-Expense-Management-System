@@ -5,5 +5,7 @@ namespace FinanceApi.Services
     public interface IUserService
     {
         Task<UserResponseDto> RegisterAsync(RegisterRequestDto request);
+
+        Task<LoginResponseDto> LoginAsync(LoginRequestDto request);
     }
 }

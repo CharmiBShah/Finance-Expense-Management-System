@@ -2,11 +2,14 @@ using FinanceApi.Common;
 using Microsoft.AspNetCore.Mvc;
 using FinanceApi.Services;
 using FinanceApi.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace FinanceApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ExpensesController : ControllerBase
     {
         private readonly IExpenseService _expenseService;
@@ -16,6 +19,17 @@ namespace FinanceApi.Controllers
             _expenseService = expenseService;
         }
 
+        private int GetUserId()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in token.");
+            }
+
+            return int.Parse(userId);
+        }
         /// <summary>
         /// Retrieves all expenses sorted by date in descending order.
         /// </summary>
@@ -23,7 +37,9 @@ namespace FinanceApi.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<ExpenseResponseDto>>>> GetExpenses()
         {
-            var expenses = await _expenseService.GetExpensesAsync();
+            var userId = GetUserId();
+
+            var expenses = await _expenseService.GetExpensesAsync(userId);
 
             var response = new ApiResponse<IEnumerable<ExpenseResponseDto>>(
                 true,
@@ -43,7 +59,9 @@ namespace FinanceApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<ExpenseResponseDto>>> GetExpense(int id)
         {
-            var expense = await _expenseService.GetExpenseByIdAsync(id);
+            var userId = GetUserId();
+
+            var expense = await _expenseService.GetExpenseByIdAsync(id, userId);
 
             if (expense == null)
             {
@@ -74,7 +92,9 @@ namespace FinanceApi.Controllers
         public async Task<ActionResult<ApiResponse<ExpenseResponseDto>>> CreateExpense(
     ExpenseCreateDto expenseDto)
         {
-            var createdExpense = await _expenseService.CreateExpenseAsync(expenseDto);
+            var userId = GetUserId();
+
+            var createdExpense = await _expenseService.CreateExpenseAsync(expenseDto,userId);
 
             var response = new ApiResponse<ExpenseResponseDto>(
                 true,
@@ -100,7 +120,9 @@ namespace FinanceApi.Controllers
     int id,
     ExpenseUpdateDto expenseDto)
         {
-            var updated = await _expenseService.UpdateExpenseAsync(id, expenseDto);
+            var userId = GetUserId();
+
+            var updated = await _expenseService.UpdateExpenseAsync(id,expenseDto,userId);
 
             if (!updated)
             {
@@ -129,7 +151,9 @@ namespace FinanceApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApiResponse<object>>> DeleteExpense(int id)
         {
-            var deleted = await _expenseService.DeleteExpenseAsync(id);
+            var userId = GetUserId();
+
+            var deleted = await _expenseService.DeleteExpenseAsync(id,userId);
 
             if (!deleted)
             {

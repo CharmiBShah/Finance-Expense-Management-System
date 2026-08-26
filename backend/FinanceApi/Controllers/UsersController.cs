@@ -23,5 +23,13 @@ namespace FinanceApi.Controllers
 
             return Ok(user);
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto request)
+        {
+            var result = await _userService.LoginAsync(request);
+
+            return Ok(result);
+        }
     }
 }

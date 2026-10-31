@@ -1,0 +1,149 @@
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>FinanceFlow</h2>
+    </div>
+
+    <nav class="navigation">
+      <a class="nav-item active">Dashboard</a>
+      <a class="nav-item">Expenses</a>
+      <a class="nav-item">Reports</a>
+      <a class="nav-item">Settings</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <header class="topbar">
+      <h2>Dashboard</h2>
+      <div class="user-profile">
+        <span>Welcome back!</span>
+      </div>
+    </header>
+
+    <section class="dashboard-content">
+
+      <div class="dashboard-heading">
+        <div>
+          <h1>{{ greeting }}!</h1>
+          <p>Here's your financial overview.</p>
+        </div>
+
+        <div class="current-date">
+          {{ currentDate | date:'MMMM d, y' }}
+        </div>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+
+        <div class="summary-card">
+          <h3>Total Expenses</h3>
+          <p class="amount">${{ totalExpenses.toFixed(2) }}</p>
+          <span>All-time spending</span>
+        </div>
+
+        <div class="summary-card">
+          <h3>This Month</h3>
+          <p class="amount">${{ monthlyExpenses.toFixed(2) }}</p>
+          <span>Monthly spending</span>
+        </div>
+
+        <div class="summary-card">
+          <h3>Total Transactions</h3>
+          <p class="amount">{{ totalTransactions }}</p>
+          <span>All recorded expenses</span>
+        </div>
+
+        <div class="summary-card">
+          <h3>Average Expense</h3>
+          <p class="amount">${{ averageExpense.toFixed(2) }}</p>
+          <span>Average per transaction</span>
+        </div>
+
+      </div>
+
+      <!-- Spending by Category -->
+      <div class="category-section">
+        <h2>Spending by Category</h2>
+
+        <div class="category-list">
+
+          @for (category of categoryPercentages; track category.category) {
+          <div class="category-item">
+
+            <div class="category-details">
+              <div class="category-label">
+                <span class="category-name">
+                  {{ category.category }}
+                </span>
+
+                <span class="category-percentage">
+                  {{ category.percentage.toFixed(1) }}%
+                </span>
+              </div>
+
+              <span class="category-amount">
+                ${{ category.amount.toFixed(2) }}
+              </span>
+            </div>
+
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="category.percentage">
+              </div>
+            </div>
+
+          </div>
+          }
+
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="transactions-section">
+
+        <div class="section-header">
+          <h2>Recent Transactions</h2>
+          <a href="#">View All</a>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (transaction of transactions; track transaction.title) {
+              <tr>
+                <td>{{ transaction.title }}</td>
+                <td>{{ transaction.category }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>${{ transaction.amount.toFixed(2) }}</td>
+                <td>
+                  <span class="status completed">
+                    {{ transaction.status }}
+                  </span>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
